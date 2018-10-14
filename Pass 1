@@ -1,0 +1,117 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+
+int locationCounter = 0;
+string currentSegment ;     // for now we assume we have only one segment
+
+
+
+class symbolTableRow {
+    public:
+string name;            //has to be unique
+int sizeInBytes = -1;   //calculated when directive is encountered
+int offset;
+// string segment;       for now we assume we have only one segment
+symbolTableRow(string n,int os ){
+    name = n;
+    offset = os;
+    }
+}
+vector <symbolTableRow> symbolTable;
+
+bool searchInSymbolTable(string x){
+    for (int i=0;i<symbolTable.size();++i){
+        if(symbolTable[i].name == x) return true;
+    }
+    return false;
+}
+
+void updateSymbolTable(string x,int y){
+    symbolTableRow stb = symbolTableRow(x,y);
+    symbolTable.push_back(stb);
+}
+
+
+
+class directiveTableRow {
+    string name;
+    int reservedSizeInBytes;
+}
+vector<directiveTabeleRow> directiveTable;      //this table must have pre populated rows in it
+
+bool searchInDirectiveTable(string x){
+    //EQUI & END like directive's functionality has been ignored till now
+    for (int i=0;i<directiveTable.size();++i){
+        if(directiveTable[i].name == x) {
+            //different directives have different flow of execution
+            string dir = directiveTable[i].name;
+            //every directive functionality has to considered
+            locationCounter += directiveTable[i].reservedSizeInBytes;
+            
+            return true;}
+    }
+    return false;
+}
+
+
+class machineInstructionTable {
+    
+}
+class directiveTable {
+    
+}
+
+
+
+void passOne(string srcStatement){
+
+int indexOfSpace = -1;
+for(int i=0;i<srcStatement.size();++i){
+    if(srcStatement[i] == ' ') {
+        indexOfSpace = i;
+        break;
+    }
+}
+string variable = srcStatement.substr(0,indexOfSpace-1);
+string directive = srcStatement.substr(indexOfSpace+1);     //this has to be either directive or machine instruction
+
+//does it define a variable or label  condition is skipped
+//beacause for now we have assumed that we HAVE variable
+
+if(searchInSymbolTable(variable)){
+    //ERROR
+}
+else {
+    updateSymbolTable(variable,locationCounter);
+}
+
+
+
+if(searchInDirectiveTable(directive)){
+    //locationCounter has been incremented
+    }
+else {
+    string instruction  = directive;
+    if(searchInMachineInstructionTable(instruction)){
+        //tbd
+    }else { //ERROR }
+}
+
+
+}
+
+
+int main()
+{
+   //our assemble program consists of one statement
+   //FOR NOW each statement will include EXACTLY 2 words separated by a space
+   //1st word : variable or label
+   //2nd word: directive or machine instruction
+   string srcStatement;
+   cin>>srcStatement;
+   
+       passOne(string srcStatement);
+       
+   return 0;
+}
