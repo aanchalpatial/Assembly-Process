@@ -59,11 +59,12 @@ int control,size;  //Control Variable for search
 void init()
 {
 	//Initializing Machine Opcode Table
-	mot[0] = {"ADD","00000001",_};
-	mot[1] = {"LDS","00000010",_};
-	mot[2] = {"LEA","00000011",_};
-	mot[3] = {"XCHNG","00000100",_};
-	mot[4] = {"MOV","00000101",_};
+	//***FOR NOW SIZE ONLY FOR 1 ADDRESSING MODE i.e Register to register for MOV,LDS,LEA,ADD is considered 
+	mot[0] = {"ADD","00000001",4};
+	mot[1] = {"LDS","00000010",4};
+	mot[2] = {"LEA","00000011",4};
+	mot[3] = {"XCHNG","00000100",4};
+	mot[4] = {"MOV","00000101",4};
 
 }
 
@@ -95,15 +96,22 @@ int search_symbol(string variable) //Find Location of the Given Symbol
   	return location;
 }
 
-int size_evaluation(string data) //Evaluate size of Variable defined
-{
+int size_evaluation(string data,string type) //Evaluate size of Variable defined in data segment
+{	
+	int k = 0;
+	if(type == "dd") k = 4;
+	else if(type == "db") k = 8;
+	else if(type == "dw") k = 2;
+	else {
+	//syntax error }
+	
 	int size = 0;
 	for(int i = 0;i < data.length();i++)
 	{
 		if(data[i] == ',')
-			size += 4;
+			size += k;
 	}
-	size += 4;
+	size += k;
 	return size;
 }
 
@@ -161,7 +169,7 @@ void pass1()
 	while(infile >> word)
 	{
 		control = search_mot(word);
-		if(control == -1)
+		if(control == -1)				
 		{
 			temp = word;
 			if(word.find(":") != -1)//Label is Found
@@ -192,11 +200,15 @@ void pass1()
 			else//Variable is Found
 			{
 				infile >> word;
+				string dataType = word;
 				infile >> word;
-				size = size_evaluation(word);
+				size = size_evaluation(word,dataType);
 				symlab.push_back({temp,"var",lc,size,sec_id,"false"}); //Inserting into Symbol Table
 				lc += size;
 			}
+		}
+		else {					//updating symbol table for code segment 
+			lc += mot[control].size;
 		}
 	
 	}
