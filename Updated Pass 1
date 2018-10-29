@@ -28,7 +28,7 @@ struct mnemonics{
 	string name;
 	string binary;
 	int size;
-}mot[5];	//machine opcode table
+}mot[6];	//machine opcode table
 
 struct symbol{ //Symbol Table format
 	string name;
@@ -59,19 +59,20 @@ int control,size;  //Control Variable for search
 void init()
 {
 	//Initializing Machine Opcode Table
-	//***FOR NOW SIZE ONLY FOR 1 ADDRESSING MODE i.e Register to register for MOV,LDS,LEA,ADD is considered 
+	//***FOR NOW, SIZE ONLY FOR 1 ADDRESSING MODE i.e memory location(direct adrressing) to register(register addressing)
+	//in above addresing mode instruction size for each machine instruction is 1
 	mot[0] = {"ADD","00000001",4};
 	mot[1] = {"LDS","00000010",4};
 	mot[2] = {"LEA","00000011",4};
 	mot[3] = {"XCHNG","00000100",4};
 	mot[4] = {"MOV","00000101",4};
-
+	mot[5] = {"LES","00000110",4};
 }
 
 int search_mot(string opcode) //Search Machine Opcode Table
 {
 	int index = -1;
-	for(int i = 0;i < 5;i++)
+	for(int i = 0;i < 6;i++)
 	{
 		if(mot[i].name == opcode)
 		{
@@ -209,6 +210,7 @@ void pass1()
 		}
 		else {					//updating symbol table for code segment 
 			lc += mot[control].size;
+			infile>>word;		//note:- there should be no spaces btw parameters of the instruction since all the parameters are considered under a single word
 		}
 	
 	}
